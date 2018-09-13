@@ -139,3 +139,6 @@ objects:
       deploymentconfig: nexus3
     sessionAffinity: None
     type: ClusterIP
+parameters:  
+- description: GUID
+  name: GUID
