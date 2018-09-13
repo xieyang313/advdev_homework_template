@@ -9,6 +9,23 @@ fi
 GUID=$1
 echo "Setting up Nexus in project $GUID-nexus"
 
+oc process -f Infrastructure/templates/nexus-template.yaml -n ${GUID}-nexus -p GUID=${GUID} | oc create -n ${GUID}-nexus -f -
+oc expose svc nexus3 -n ${GUID}-nexus
+oc expose svc nexus-registry -n ${GUID}-nexus
+
+while : ; do
+    oc get pod -n ${GUID}-nexus|grep '\-1\-'|grep -v deploy|grep "1/1"
+    if [$? == "1"] 
+      then 
+        sleep 10
+      else 
+        break 
+    fi
+done
+
+sh setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n ${GUID}-nexus )
+rm -f setup_nexus3.sh
+
 # Code to set up the Nexus. It will need to
 # * Create Nexus
 # * Set the right options for the Nexus Deployment Config
