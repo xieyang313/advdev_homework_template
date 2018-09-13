@@ -225,16 +225,11 @@ objects:
       app: sonarqube
     name: sonarqube
   spec:
-    lookupPolicy:
-      local: false
     tags:
-      from:
+    - from:
         kind: DockerImage
-        name: docker-registry.default.svc:5000/${GUID}-sonarqube/sonarqube:6.7.4
-      importPolicy: {}
+        name: docker.io/wkulhanek/sonarqube:6.7.4
       name: 6.7.4
-      referencePolicy:
-        type: Source
 - apiVersion: v1
   kind: Service
   metadata:
