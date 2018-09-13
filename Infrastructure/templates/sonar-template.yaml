@@ -49,20 +49,11 @@ objects:
         containers:
         - env:
           - name: POSTGRESQL_USER
-            valueFrom:
-              secretKeyRef:
-                key: database-user
-                name: postgresql
+            value: sonar
           - name: POSTGRESQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: database-password
-                name: postgresql
+            value: sonar
           - name: POSTGRESQL_DATABASE
-            valueFrom:
-              secretKeyRef:
-                key: database-name
-                name: postgresql
+            value: sonar
           image: docker-registry.default.svc:5000/openshift/postgresql
           imagePullPolicy: IfNotPresent
           livenessProbe:
