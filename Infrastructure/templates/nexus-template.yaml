@@ -4,6 +4,18 @@ metadata:
   name: nexus
 objects:
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: nexus3
+    name: nexus3
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/sonatype/nexus3:latest
+      name: latest
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
