@@ -16,6 +16,16 @@ objects:
         name: docker.io/sonatype/nexus3:latest
       name: latest
 - apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: nexus-pvc
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 4Gi
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -94,7 +104,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: nexus3:latest
-          namespace: xy-nexus
+          namespace: ${GUID}-nexus
       type: ImageChange
 - apiVersion: v1
   kind: Service
