@@ -14,8 +14,8 @@ oc expose svc nexus3 -n ${GUID}-nexus
 oc expose svc nexus-registry -n ${GUID}-nexus
 
 while : ; do
-    oc get pod -n ${GUID}-nexus|grep '\-1\-'|grep -v deploy|grep "1/1"
-    if [$? == "1"] 
+    oc get pod -n ${GUID}-nexus | grep '\-1\-' | grep -v deploy | grep "1/1"
+    if [ $? == "1" ] 
       then 
         sleep 10
       else 
