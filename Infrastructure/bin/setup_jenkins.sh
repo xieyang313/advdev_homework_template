@@ -42,7 +42,7 @@ oc create configmap basic-config --from-literal="GUID=${GUID}" --from-literal="R
 
 oc create -f Infrastructure/templates/bc-mlbparks.yaml -n ${GUID}-jenkins
 oc create -f Infrastructure/templates/bc-nationalparks.yaml -n ${GUID}-jenkins
-oc create -f Infrastructure/templates/bc-parksmap.yaml- -n ${GUID}-jenkins
+oc create -f Infrastructure/templates/bc-parksmap.yaml -n ${GUID}-jenkins
 
 
 
