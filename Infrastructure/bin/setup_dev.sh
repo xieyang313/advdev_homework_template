@@ -22,6 +22,8 @@ oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n ${
 
 oc policy add-role-to-user admin system:serviceaccount:gpte-jenkins:jenkins -n ${GUID}-parks-dev
 
+oc new-app -e MONGODB_USER=mongodb -e MONGODB_PASSWORD=mongodb -e MONGODB_DATABASE=mongodb -e MONGODB_ADMIN_PASSWORD=mongodb registry.access.redhat.com/rhscl/mongodb-34-rhel7:latest -n ${GUID}-parks-dev
+
 #create buildconfig
 oc new-build --binary=true --name="mlparks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
 
@@ -78,6 +80,3 @@ oc expose svc mlparks -n ${GUID}-parks-dev --labels="type=parksmap-backend"
 oc expose svc nationalparks -n ${GUID}-parks-dev --labels="type=parksmap-backend"
 
 oc expose svc parksmap -n ${GUID}-parks-dev
-
-oc create configmap mlparks-config --from-env-file=test.env -n ${GUID}-parks-dev
-
