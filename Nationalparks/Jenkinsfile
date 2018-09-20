@@ -48,7 +48,7 @@ podTemplate(
     stage('Build war') {
       echo "Building version ${version}"
     
-      sh "${mvnCmd} -f ./Nationalparks/pom.xml clean package Nationalparks -DskipTests"
+      sh "${mvnCmd} -f ./Nationalparks/pom.xml clean package -DskipTests"
     }
     
     // Your Pipeline Code goes here. Make sure to use the ${GUID} and ${CLUSTER} parameters where appropriate
