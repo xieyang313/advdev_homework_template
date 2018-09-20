@@ -18,6 +18,8 @@ podTemplate(
 
     sh "pwd"
 
+    sh "ls"
+
     sh "cp ./nexus_settings.xml ./Nationalparks/"
 
     sh "sed -i 's/GUID/${GUID}' ./nexus_settings.xml"
