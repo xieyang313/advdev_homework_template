@@ -16,6 +16,14 @@ podTemplate(
     echo "GUID: ${GUID}"
     echo "CLUSTER: ${CLUSTER}"
 
+    
+    stage('Checkout Source') {
+   // git credentialsId: 'f5706e9b-6da8-40e6-9836-6bd582aece52', 
+    //url: 'http://gogs-xy-gogs.apps.0845.openshift.opentlc.com/CICDLabs/openshift-tasks-private.git'
+     checkout scm
+    
+    }
+
     sh "pwd"
 
     sh "ls"
@@ -28,12 +36,6 @@ podTemplate(
     
     def mvnCmd = "mvn -s ./Nationalparks/nexus_settings.xml"
 
-    stage('Checkout Source') {
-   // git credentialsId: 'f5706e9b-6da8-40e6-9836-6bd582aece52', 
-    //url: 'http://gogs-xy-gogs.apps.0845.openshift.opentlc.com/CICDLabs/openshift-tasks-private.git'
-     checkout scm
-    
-    }
     def groupId    = getGroupIdFromPom("./Nationalparks/pom.xml")
     def artifactId = getArtifactIdFromPom("./Nationalparks/pom.xml")
     def version    = getVersionFromPom("./Nationalparks/pom.xml")
