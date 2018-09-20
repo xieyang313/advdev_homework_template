@@ -43,9 +43,7 @@ spec:
               command:
                 - stat
                 - /tmp/initialized
-          limits:
-              cpu: '3'
-              memory: 6Gi
+            initialDelaySeconds: 20
   volumeClaimTemplates:
     - metadata:
         name: mongo-data
