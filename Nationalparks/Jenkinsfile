@@ -74,7 +74,7 @@ podTemplate(
 
       // Build the OpenShift Image in OpenShift and tag it.
     stage('Build and Tag OpenShift Image') {
-      echo "Building OpenShift container image tasks:${devTag}"
+      echo "Building OpenShift container image nationalparks:${devTag}"
     
       sh "oc start-build nationalparks --follow --from-file=./Nationalparks/target/nationalparks.war -n ${GUID}-parks-dev"
     
