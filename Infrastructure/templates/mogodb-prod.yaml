@@ -27,9 +27,9 @@ spec:
             - name: MONGODB_DATABASE
               value: "parks"
             - name: MONGODB_USER
-              value: "mongodb_user"
+              value: "mongodb"
             - name: MONGODB_PASSWORD
-              value: "mongodb_password"
+              value: "mongodb"
             - name: MONGODB_ADMIN_PASSWORD
               value: "mongodb_admin_password"
             - name: MONGODB_REPLICA_NAME
@@ -44,8 +44,8 @@ spec:
                 - stat
                 - /tmp/initialized
           limits:
-              cpu: '2'
-              memory: 4Gi
+              cpu: '3'
+              memory: 6Gi
   volumeClaimTemplates:
     - metadata:
         name: mongo-data

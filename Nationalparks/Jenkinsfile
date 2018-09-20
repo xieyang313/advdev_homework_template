@@ -16,6 +16,35 @@ podTemplate(
     echo "GUID: ${GUID}"
     echo "CLUSTER: ${CLUSTER}"
 
+    sh "cp ./nexus_settings.xml ./Nationalparks/"
+
+    sh "sed -i 's/GUID/${GUID}' ./nexus_settings.xml"
+
+    sh "sed -i 's/CLUSTER/${CLUSTER}' ./nexus_settings.xml"
+    
+    def mvnCmd = "mvn -s ./Nationalparks/nexus_settings.xml"
+
+    stage('Checkout Source') {
+   // git credentialsId: 'f5706e9b-6da8-40e6-9836-6bd582aece52', 
+    //url: 'http://gogs-xy-gogs.apps.0845.openshift.opentlc.com/CICDLabs/openshift-tasks-private.git'
+     checkout scm
+    
+    }
+    def groupId    = getGroupIdFromPom("pom.xml")
+    def artifactId = getArtifactIdFromPom("pom.xml")
+    def version    = getVersionFromPom("pom.xml")
+
+    // Set the tag for the development image: version + build number
+    def devTag  = "${version}-${BUILD_NUMBER}"
+    // Set the tag for the production image: version
+    def prodTag = "${version}"
+
+    stage('Build war') {
+      echo "Building version ${version}"
+    
+      sh "${mvnCmd} clean package -DskipTests"
+    }
+    
     // Your Pipeline Code goes here. Make sure to use the ${GUID} and ${CLUSTER} parameters where appropriate
     // You need to build the application in directory `Nationalparks`.
     // Also copy "../nexus_settings.xml" to your build directory
