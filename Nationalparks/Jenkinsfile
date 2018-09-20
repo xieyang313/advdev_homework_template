@@ -30,9 +30,9 @@ podTemplate(
 
     sh "cp ./nexus_settings.xml ./Nationalparks/"
 
-    sh "sed -i 's/GUID/${GUID}' ./nexus_settings.xml"
+    sh "sed -i 's/GUID/${GUID}/' ./Nationalparks/nexus_settings.xml"
 
-    sh "sed -i 's/CLUSTER/${CLUSTER}' ./nexus_settings.xml"
+    sh "sed -i 's/CLUSTER/${CLUSTER}/' ./Nationalparks/nexus_settings.xml"
     
     def mvnCmd = "mvn -s ./Nationalparks/nexus_settings.xml"
 
