@@ -109,3 +109,6 @@ oc expose svc mlparks-green --name mlparks -n ${GUID}-parks-prod --labels="type=
 oc expose svc nationalparks-green --name nationalparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
 oc expose svc parksmap-green --name parksmap -n ${GUID}-parks-prod
+
+oc set deployment-hook dc/nationalparks-green  -n ${GUID}-parks-prod --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.host }')/ws/data/load/
+oc set deployment-hook dc/mlparks-green  -n ${GUID}-parks-prod --post -c mlparks --failure-policy=abort -- curl http://$(oc get route mlparks -n ${GUID}-parks-prod  -o jsonpath='{ .spec.host }')/ws/data/load/

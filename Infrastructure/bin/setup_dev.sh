@@ -68,7 +68,8 @@ oc set probe dc/mlparks --readiness --failure-threshold 3 --initial-delay-second
 oc set probe dc/nationalparks --liveness --failure-threshold 5 --initial-delay-seconds 30 -- echo ok -n ${GUID}-parks-dev
 oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 60 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
 
-oc set deployment-hook dc/nationalparks --post -c nationalparks --failure-policy=abort -- curl http://127.0.0.1:8080/ws/data/load/
+oc set deployment-hook dc/nationalparks  -n ${GUID}-parks-dev --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-dev -o jsonpath='{ .spec.host }')/ws/data/load/
+oc set deployment-hook dc/mlparks  -n ${GUID}-parks-dev --post -c mlparks --failure-policy=abort -- curl http://$(oc get route mlparks -o -n ${GUID}-parks-dev jsonpath='{ .spec.host }')/ws/data/load/
 
 #expose svcs
 oc expose dc mlparks --port 8080 -n ${GUID}-parks-dev
