@@ -44,7 +44,9 @@ oc create -f Infrastructure/templates/bc-mlbparks.yaml -n ${GUID}-jenkins
 oc create -f Infrastructure/templates/bc-nationalparks.yaml -n ${GUID}-jenkins
 oc create -f Infrastructure/templates/bc-parksmap.yaml -n ${GUID}-jenkins
 
-
+oc set env bc/mlbparks-pipeline GUID=${GUID} REPO=${REPO} CLUSTER=${CLUSTER} -n ${GUID}-jenkins
+oc set env bc/nationalparks-pipeline GUID=${GUID} REPO=${REPO} CLUSTER=${CLUSTER} -n ${GUID}-jenkins
+oc set env bc/parksmap-pipeline GUID=${GUID} REPO=${REPO} CLUSTER=${CLUSTER} -n ${GUID}-jenkins
 
 
 # Code to set up the Jenkins project to execute the

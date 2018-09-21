@@ -50,30 +50,30 @@ spec:
 
 oc create -f ./Infrastructure/templates/mogodb-prod.yaml -n ${GUID}-parks-prod
 
-oc create configmap mlparks-blue-config --from-env-file=./Infrastructure/templates/MLBParks-blue.env -n ${GUID}-parks-prod
+oc create configmap mlbparks-blue-config --from-env-file=./Infrastructure/templates/MLBParks-blue.env -n ${GUID}-parks-prod
 
 oc create configmap nationalparks-blue-config --from-env-file=./Infrastructure/templates/NationalParks-blue.env -n ${GUID}-parks-prod
 
 oc create configmap parksmap-blue-config --from-env-file=./Infrastructure/templates/ParksMap-blue.env -n ${GUID}-parks-prod
 
-oc create configmap mlparks-green-config --from-env-file=./Infrastructure/templates/MLBParks-green.env -n ${GUID}-parks-prod
+oc create configmap mlbparks-green-config --from-env-file=./Infrastructure/templates/MLBParks-green.env -n ${GUID}-parks-prod
 
 oc create configmap nationalparks-green-config --from-env-file=./Infrastructure/templates/NationalParks-green.env -n ${GUID}-parks-prod
 
 oc create configmap parksmap-green-config --from-env-file=./Infrastructure/templates/ParksMap-green.env -n ${GUID}-parks-prod
 
 
-oc new-app ${GUID}-parks-dev/mlparks:0.0 --name=mlparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 
-oc set triggers dc/mlparks-blue --remove-all -n ${GUID}-parks-prod
+oc set triggers dc/mlbparks-blue --remove-all -n ${GUID}-parks-prod
 
 oc set triggers dc/nationalparks-blue --remove-all -n ${GUID}-parks-prod
 
 oc set triggers dc/parksmap-blue --remove-all -n ${GUID}-parks-prod
 
-oc set env dc/mlparks-blue --from=configmap/mlparks-blue-config -n ${GUID}-parks-prod
+oc set env dc/mlbparks-blue --from=configmap/mlbparks-blue-config -n ${GUID}-parks-prod
 
 oc set env dc/nationalparks-blue --from=configmap/nationalparks-blue-config -n ${GUID}-parks-prod
 
@@ -81,41 +81,41 @@ oc set env dc/parksmap-blue --from=configmap/parksmap-blue-config -n ${GUID}-par
 
 
 
-oc new-app ${GUID}-parks-dev/mlparks:0.0 --name=mlparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
+oc new-app ${GUID}-parks-dev/mlbparks:0.0 --name=mlbparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc new-app ${GUID}-parks-dev/nationalparks:0.0 --name=nationalparks-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 oc new-app ${GUID}-parks-dev/parksmap:0.0 --name=parksmap-green --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
 
-oc set triggers dc/mlparks-green --remove-all -n ${GUID}-parks-prod
+oc set triggers dc/mlbparks-green --remove-all -n ${GUID}-parks-prod
 
 oc set triggers dc/nationalparks-green --remove-all -n ${GUID}-parks-prod
 
 oc set triggers dc/parksmap-green --remove-all -n ${GUID}-parks-prod
 
-oc set env dc/mlparks-green --from=configmap/mlparks-green-config -n ${GUID}-parks-prod
+oc set env dc/mlbparks-green --from=configmap/mlbparks-green-config -n ${GUID}-parks-prod
 
 oc set env dc/nationalparks-green --from=configmap/nationalparks-green-config -n ${GUID}-parks-prod
 
 oc set env dc/parksmap-green --from=configmap/parksmap-green-config -n ${GUID}-parks-prod
 
 
-oc expose dc mlparks-green --port 8080 -n ${GUID}-parks-prod
+oc expose dc mlbparks-green --port 8080 -n ${GUID}-parks-prod
 
 oc expose dc nationalparks-green --port 8080 -n ${GUID}-parks-prod
 
 oc expose dc parksmap-green --port 8080 -n ${GUID}-parks-prod
 
 
-oc expose dc mlparks-blue --port 8080 -n ${GUID}-parks-prod
+oc expose dc mlbparks-blue --port 8080 -n ${GUID}-parks-prod
 
 oc expose dc nationalparks-blue --port 8080 -n ${GUID}-parks-prod
 
 oc expose dc parksmap-blue --port 8080 -n ${GUID}-parks-prod
 
-oc expose svc mlparks-green --name mlparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
+oc expose svc mlbparks-green --name mlbparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
 oc expose svc nationalparks-green --name nationalparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
 oc expose svc parksmap-green --name parksmap -n ${GUID}-parks-prod
 
 oc set deployment-hook dc/nationalparks-green  -n ${GUID}-parks-prod --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.host }')/ws/data/load/
-oc set deployment-hook dc/mlparks-green  -n ${GUID}-parks-prod --post -c mlparks --failure-policy=abort -- curl http://$(oc get route mlparks -n ${GUID}-parks-prod  -o jsonpath='{ .spec.host }')/ws/data/load/
+oc set deployment-hook dc/mlbparks-green  -n ${GUID}-parks-prod --post -c mlbparks --failure-policy=abort -- curl http://$(oc get route mlbparks -n ${GUID}-parks-prod  -o jsonpath='{ .spec.host }')/ws/data/load/
