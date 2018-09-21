@@ -33,7 +33,7 @@ spec:
     - name: mongodb
       port: 27017
   selector:
-    name: "mongodb"' | oc create -f -
+    name: "mongodb"' | oc create -n ${GUID}-parks-prod -f -
 
 echo 'kind: Service
 apiVersion: v1
@@ -46,21 +46,21 @@ spec:
     - name: mongodb
       port: 27017
   selector:
-    name: "mongodb"' | oc create -f -
+    name: "mongodb"' | oc create -n ${GUID}-parks-prod -f -
 
 oc create -f ./Infrastructure/templates/mogodb-prod.yaml -n ${GUID}-parks-prod
 
-oc create configmap mlparks-blue-config --from-env-file=./Infrastructure/templates/MLBParks-blue.env -n ${GUID}-parks-dev
+oc create configmap mlparks-blue-config --from-env-file=./Infrastructure/templates/MLBParks-blue.env -n ${GUID}-parks-prod
 
-oc create configmap nationalparks-blue-config --from-env-file=./Infrastructure/templates/NationalParks-blue.env -n ${GUID}-parks-dev
+oc create configmap nationalparks-blue-config --from-env-file=./Infrastructure/templates/NationalParks-blue.env -n ${GUID}-parks-prod
 
-oc create configmap parksmap-blue-config --from-env-file=./Infrastructure/templates/ParksMap-blue.env -n ${GUID}-parks-dev
+oc create configmap parksmap-blue-config --from-env-file=./Infrastructure/templates/ParksMap-blue.env -n ${GUID}-parks-prod
 
-oc create configmap mlparks-green-config --from-env-file=./Infrastructure/templates/MLBParks-green.env -n ${GUID}-parks-dev
+oc create configmap mlparks-green-config --from-env-file=./Infrastructure/templates/MLBParks-green.env -n ${GUID}-parks-prod
 
-oc create configmap nationalparks-green-config --from-env-file=./Infrastructure/templates/NationalParks-green.env -n ${GUID}-parks-dev
+oc create configmap nationalparks-green-config --from-env-file=./Infrastructure/templates/NationalParks-green.env -n ${GUID}-parks-prod
 
-oc create configmap parksmap-green-config --from-env-file=./Infrastructure/templates/ParksMap-green.env -n ${GUID}-parks-dev
+oc create configmap parksmap-green-config --from-env-file=./Infrastructure/templates/ParksMap-green.env -n ${GUID}-parks-prod
 
 
 oc new-app ${GUID}-parks-dev/mlparks:0.0 --name=mlparks-blue --allow-missing-imagestream-tags=true -n ${GUID}-parks-prod
@@ -98,14 +98,14 @@ oc set env dc/nationalparks-green --from=configmap/nationalparks-green-config -n
 oc set env dc/parksmap-green --from=configmap/parksmap-green-config -n ${GUID}-parks-prod
 
 
-oc expose dc mlparks-green --port 8080 -n ${GUID}-parks-dev
+oc expose dc mlparks-green --port 8080 -n ${GUID}-parks-prod
 
-oc expose dc nationalparks-green --port 8080 -n ${GUID}-parks-dev
+oc expose dc nationalparks-green --port 8080 -n ${GUID}-parks-prod
 
-oc expose dc parksmap-green --port 8080 -n ${GUID}-parks-dev
+oc expose dc parksmap-green --port 8080 -n ${GUID}-parks-prod
 
-oc expose svc mlparks-green -n ${GUID}-parks-dev --labels="type=parksmap-backend"
+oc expose svc mlparks-green --name mlparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
-oc expose svc nationalparks-green -n ${GUID}-parks-dev --labels="type=parksmap-backend"
+oc expose svc nationalparks-green --name nationalparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
-oc expose svc parksmap-green -n ${GUID}-parks-dev
+oc expose svc parksmap-green --name parksmap -n ${GUID}-parks-prod

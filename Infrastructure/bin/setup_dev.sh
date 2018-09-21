@@ -14,7 +14,7 @@ echo "Setting up Parks Development Environment in project ${GUID}-parks-dev"
 # To be Implemented by Student
 
 #config permission
-oc policy add-role-to-user edit system:serviceaccount:${GUID}-jenkins:jenkins -n ${GUID}-parks-dev
+oc policy add-role-to-user admin system:serviceaccount:${GUID}-jenkins:jenkins -n ${GUID}-parks-dev
 
 oc policy add-role-to-user view --serviceaccount=default -n ${GUID}-parks-dev
 
@@ -22,7 +22,7 @@ oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n ${
 
 oc policy add-role-to-user admin system:serviceaccount:gpte-jenkins:jenkins -n ${GUID}-parks-dev
 
-oc new-app -e MONGODB_USER=mongodb -e MONGODB_PASSWORD=mongodb -e MONGODB_DATABASE=mongodb -e MONGODB_ADMIN_PASSWORD=mongodb registry.access.redhat.com/rhscl/mongodb-34-rhel7:latest -n ${GUID}-parks-dev
+oc new-app -e MONGODB_USER=mongodb -e MONGODB_PASSWORD=mongodb -e MONGODB_DATABASE=parks -e MONGODB_ADMIN_PASSWORD=mongodb --name=mongodb registry.access.redhat.com/rhscl/mongodb-34-rhel7:latest -n ${GUID}-parks-dev
 
 #create buildconfig
 oc new-build --binary=true --name="mlparks" jboss-eap70-openshift:1.7 -n ${GUID}-parks-dev
@@ -67,6 +67,8 @@ oc set probe dc/mlparks --readiness --failure-threshold 3 --initial-delay-second
 
 oc set probe dc/nationalparks --liveness --failure-threshold 5 --initial-delay-seconds 30 -- echo ok -n ${GUID}-parks-dev
 oc set probe dc/nationalparks --readiness --failure-threshold 3 --initial-delay-seconds 60 --get-url=http://:8080/ws/healthz/ -n ${GUID}-parks-dev
+
+oc set deployment-hook dc/nationalparks --post -c nationalparks --failure-policy=abort -- curl http://127.0.0.1:8080/ws/data/load/
 
 #expose svcs
 oc expose dc mlparks --port 8080 -n ${GUID}-parks-dev

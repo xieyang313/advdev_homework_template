@@ -18,10 +18,7 @@ podTemplate(
 
     
     stage('Checkout Source') {
-   // git credentialsId: 'f5706e9b-6da8-40e6-9836-6bd582aece52', 
-    //url: 'http://gogs-xy-gogs.apps.0845.openshift.opentlc.com/CICDLabs/openshift-tasks-private.git'
      checkout scm
-    
     }
 
     sh "pwd"
@@ -93,6 +90,59 @@ podTemplate(
     openshiftVerifyDeployment depCfg: 'nationalparks', namespace: '${GUID}-parks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
     openshiftVerifyService namespace: '${GUID}-parks-dev', svcName: 'nationalparks', verbose: 'false'
   }
+
+  stage('Integration Tests') {
+    echo "Running Integration Tests"
+    sleep 30
+    echo "ls ws info"
+    sh "curl -i -H 'Content-Length: 0' -X GET http://nationalparks-${GUID}-parks-dev.apps.${CLUSTER}/ws/info/"
+ 
+  }
+
+  stage('Copy Image to Nexus Docker Registry') {
+    echo "Copy image to Nexus Docker Registry"
+
+    sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds openshift:\$(oc whoami -t) --dest-creds admin:admin123 docker://docker-registry-default.apps.${CLUSTER}/${GUID}-parks-dev/nationalparks:${devTag} docker://nexus-registry-${GUID}-nexus.apps.${CLUSTER}/nationalparks:${devTag}"
+
+    // Tag the built image with the production tag.
+    // Replace xyz-tasks-dev with the name of your dev project
+    openshiftTag alias: 'false', destStream: 'nationalparks', destTag: prodTag, destinationNamespace: '${GUID}-parks-dev', namespace: '${GUID}-parks-dev', srcStream: 'nationalparks', srcTag: devTag, verbose: 'false'
+  }
+
+  // Blue/Green Deployment into Production
+  // -------------------------------------
+  // Do not activate the new version yet.
+  def destApp = "nationalparks-green"
+  def activeApp = ""
+
+  stage('Blue/Green Production Deployment') {
+      // Replace xyz-tasks-dev and xyz-tasks-prod with
+    // your project names
+    activeApp = sh(returnStdout: true, script: "oc get route nationalparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.to.name }'").trim()
+    if (activeApp == "nationalparks-green") {
+    destApp = "nationalparks-blue"
+  }
+    echo "Active Application:      " + activeApp
+    echo "Destination Application: " + destApp
+
+    // Update the Image on the Production Deployment Config
+    sh "oc set image dc/${destApp} ${destApp}=docker-registry.default.svc:5000/${GUID}-parks-dev/nationalparks:${prodTag} -n ${GUID}-parks-prod"
+
+    // Deploy the inactive application.
+    // Replace xyz-tasks-prod with the name of your production project
+    openshiftDeploy depCfg: destApp, namespace: '${GUID}-parks-prod', verbose: 'false', waitTime: '20', waitUnit: 'unit'
+    openshiftVerifyDeployment depCfg: destApp, namespace: '${GUID}-parks-prod', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
+    openshiftVerifyService namespace: '${GUID}-parks-prod', svcName: destApp, verbose: 'false'
+  }
+
+  stage('Switch over to new Version') {
+    input "Switch Production?"
+
+    echo "Switching Production application to ${destApp}."
+    // Replace xyz-tasks-prod with the name of your production project
+    sh 'oc patch route nationalparks -n ${GUID}-parks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
+  }
+
     // Your Pipeline Code goes here. Make sure to use the ${GUID} and ${CLUSTER} parameters where appropriate
     // You need to build the application in directory `Nationalparks`.
     // Also copy "../nexus_settings.xml" to your build directory
