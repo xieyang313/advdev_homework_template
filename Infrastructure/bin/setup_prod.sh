@@ -104,6 +104,13 @@ oc expose dc nationalparks-green --port 8080 -n ${GUID}-parks-prod
 
 oc expose dc parksmap-green --port 8080 -n ${GUID}-parks-prod
 
+
+oc expose dc mlparks-blue --port 8080 -n ${GUID}-parks-prod
+
+oc expose dc nationalparks-blue --port 8080 -n ${GUID}-parks-prod
+
+oc expose dc parksmap-blue --port 8080 -n ${GUID}-parks-prod
+
 oc expose svc mlparks-green --name mlparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
 
 oc expose svc nationalparks-green --name nationalparks -n ${GUID}-parks-prod --labels="type=parksmap-backend"
