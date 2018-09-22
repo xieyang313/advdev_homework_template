@@ -12,9 +12,9 @@ REPO=$2
 CLUSTER=$3
 echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cluster ${CLUSTER}"
 oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=4Gi --param VOLUME_CAPACITY=4Gi -n ${GUID}-jenkins
-oc rollout pause dc jenkins
-oc set resources dc jenkins --limits=memory=4Gi,cpu=2 --requests=memory=2Gi,cpu=1
-oc rollout resume dc jenkins
+oc rollout pause dc jenkins -n ${GUID}-jenkins
+oc set resources dc jenkins --limits=memory=4Gi,cpu=2 --requests=memory=2Gi,cpu=1 -n ${GUID}-jenkins
+oc rollout resume dc jenkins -n ${GUID}-jenkins
 
 while : ; do
     oc get pod -n ${GUID}-jenkins | grep '\-1\-' | grep -v deploy | grep "1/1"
