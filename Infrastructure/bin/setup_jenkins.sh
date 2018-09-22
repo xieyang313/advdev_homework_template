@@ -17,7 +17,7 @@ oc set resources dc jenkins --limits=memory=4Gi,cpu=2 --requests=memory=2Gi,cpu=
 oc rollout resume dc jenkins -n ${GUID}-jenkins
 
 while : ; do
-    oc get pod -n ${GUID}-jenkins | grep '\-1\-' | grep -v deploy | grep "1/1"
+    oc get pod -n ${GUID}-jenkins | grep -v deploy | grep "1/1"
     if [ $? == "1" ] 
       then 
         sleep 10
