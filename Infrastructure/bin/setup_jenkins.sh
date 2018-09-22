@@ -23,7 +23,7 @@ while : ; do
     fi
 done
 
-oc new-build --name=jenkins-slave-appdev -D- 'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.9\nUSER root\nRUN yum -y install skopeo apb && \yum clean all\nUSER 1001' -n ${GUID}-jenkins
+oc new-build --name=jenkins-slave-appdev --dockerfile=$'FROM docker.io/openshift/jenkins-slave-maven-centos7:v3.9\nUSER root\nRUN yum -y install skopeo apb && \yum clean all\nUSER 1001' -n ${GUID}-jenkins
 
 while : ; do
     oc get pod -n ${GUID}-jenkins | grep 'slave' | grep "Completed"
