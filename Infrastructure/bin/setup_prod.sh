@@ -119,3 +119,6 @@ oc expose svc parksmap-green --name parksmap -n ${GUID}-parks-prod
 
 oc set deployment-hook dc/nationalparks-green  -n ${GUID}-parks-prod --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.host }')/ws/data/load/
 oc set deployment-hook dc/mlbparks-green  -n ${GUID}-parks-prod --post -c mlbparks --failure-policy=abort -- curl http://$(oc get route mlbparks -n ${GUID}-parks-prod  -o jsonpath='{ .spec.host }')/ws/data/load/
+
+oc set deployment-hook dc/nationalparks-blue  -n ${GUID}-parks-prod --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-prod -o jsonpath='{ .spec.host }')/ws/data/load/
+oc set deployment-hook dc/mlbparks-blue  -n ${GUID}-parks-prod --post -c mlbparks --failure-policy=abort -- curl http://$(oc get route mlbparks -n ${GUID}-parks-prod  -o jsonpath='{ .spec.host }')/ws/data/load/
