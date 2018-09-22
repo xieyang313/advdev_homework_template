@@ -83,4 +83,4 @@ oc expose svc nationalparks -n ${GUID}-parks-dev --labels="type=parksmap-backend
 oc expose svc parksmap -n ${GUID}-parks-dev
 
 oc set deployment-hook dc/nationalparks  -n ${GUID}-parks-dev --post -c nationalparks --failure-policy=abort -- curl http://$(oc get route nationalparks -n ${GUID}-parks-dev -o jsonpath='{ .spec.host }')/ws/data/load/
-oc set deployment-hook dc/mlbparks  -n ${GUID}-parks-dev --post -c mlbparks --failure-policy=abort -- curl http://$(oc get route mlbparks -o -n ${GUID}-parks-dev jsonpath='{ .spec.host }')/ws/data/load/
+oc set deployment-hook dc/mlbparks  -n ${GUID}-parks-dev --post -c mlbparks --failure-policy=abort -- curl http://$(oc get route mlbparks -n ${GUID}-parks-dev -o jsonpath='{ .spec.host }')/ws/data/load/
